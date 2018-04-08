@@ -1,11 +1,11 @@
-classdef signal < handle
+classdef Signal < handle
     properties (Access = private)
         size
         bits
     end
     
     methods
-        function this = signal(parameter)   %konstruktor
+        function this = Signal(parameter)   %konstruktor
             if (nargin ~= 0)    %jeœli nie zero
                 this.bits = logical.empty;  %ustawiamy bity na puste
                 if (isnumeric(parameter))   %jeœli parametr jest numeryczny
@@ -31,7 +31,7 @@ classdef signal < handle
             if (i >= 1 && 1 <=this.size)
                 bit = this.bits(i).*1 + ~this.bits(i).*0; %bit = (this.bits(i)) ? 1 : 0;
             else
-                disp("getBitAt(" + i + ") Index out of bound! Signal is " + this.size + "b!");
+                disp('getBitAt(' + i +') Index out of bound! Signal is ' + this.size + 'b!');
                 bit = [];
             end
         end
@@ -64,7 +64,7 @@ classdef signal < handle
             if (i >= 1 && 1 <=this.size)
                 this.bits(i) = ~this.bits(i);
             else
-                disp("negBitAt(" + i + ") Index out of bound! Signal is " + this.size + "b!");
+                disp('negBitAt(' + i + ') Index out of bound! Signal is ' + this.size + 'b!');
             end
         end
         
@@ -98,19 +98,19 @@ classdef signal < handle
         end
         
         function cpy = copy(this)           %tworzy kopiê zadanego sygna³u
-            cpy = signal(this.size);        %cpy = new signal(this.size)
+            cpy = Signal(this.size);        %cpy = new signal(this.size)
             for i = 1 : cpy.size
                 cpy.bits(i) = this.bits(i); %przepisanie wartoœci
             end
         end
         
         function printSignal(this)          %wydruk sygna³u
-            disp("Current Signal: ");
-            fprintf("[ ");
+            disp('Current Signal: ');
+            fprintf('[ ');
             for i = 1 : this.size
-               fprintf("%d ", this.bits(i));
+               fprintf('%d ', this.bits(i));
             end
-            fprintf("]\n");
+            fprintf(']\n');
         end
         
         function signal = toString(this)    %konwersja sygna³u na string, u¿ywamy

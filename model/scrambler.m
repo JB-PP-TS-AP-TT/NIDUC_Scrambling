@@ -33,11 +33,11 @@ classdef scrambler < handle
         end
         
         function print_register(this)   %wydruk stanu rejestru lfs
-            fprintf("Rejestr generatora:\n[");
+            fprintf('Rejestr generatora:\n[');
             for i = 1 : size(this.lfs_register,2)
-                fprintf("%d, ", this.lfs_register(i));
+                fprintf('%d, ', this.lfs_register(i));
             end
-            fprintf(" ]\n");
+            fprintf(' ]\n');
         end
         
     end

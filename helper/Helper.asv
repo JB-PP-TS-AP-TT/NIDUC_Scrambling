@@ -1,0 +1,15 @@
+classdef Helper
+    %HELPER class containg some helper methods
+    
+    methods (Static)
+        function o = appendToAlign64(signal1)
+            currentSize = signal1.getSize();
+            newSize = 64 * (floor((currentSize-1)/64) + 1);
+            o = signal(newSize);
+            
+            for i = 1 : currentSize
+                o.setBitV(i, signal1.getBitAt(i));
+            end
+        end
+    end
+end

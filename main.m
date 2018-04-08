@@ -6,7 +6,7 @@ addpath(genpath('model'));
 %zdefiniowanej w glownyWidok.m, która z kolei odpala figure
 %glownyWidok.fig, stworzon¹ przy pomocy GUIDE (lewym na glownyWidok.fig i
 %edytuj w GUIDE)
-%mainView();
+%ainView();
 
 test_sig = signal(16);
 test_sig.setBitTrue(1);
@@ -20,5 +20,5 @@ copy_sig = test_sig.copy(); %kopia sygna³u zostanie zescramblowana
 
 scrambler.scramble_signal(copy_sig);    %scramblowanie copy_sig
 
-fprintf("\ntest_sig after scrambling:\n");   
+fprintf('\ntest_sig after scrambling:\n');   
 copy_sig.printSignal();     %wydruk po scramblingu

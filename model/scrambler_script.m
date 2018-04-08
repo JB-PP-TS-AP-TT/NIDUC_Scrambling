@@ -4,11 +4,11 @@ signal = [0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0
 frame  = [0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1];
 output = zeros(32);
 
-fprintf("Przed: [");
+fprintf('Przed: [');
 for i = 1 : length(signal)
-    fprintf("%d ", signal(i));
+    fprintf('%d ', signal(i));
 end
-fprintf("\b]\n");
+fprintf('\b]\n');
 
 for i = 1 : length(signal)
     x = xor(frame(1), xor(frame(40), frame(59)));   %xor bitu 1, 40, 59
@@ -17,8 +17,8 @@ for i = 1 : length(signal)
     frame = [output(i), frame(1:end-1)];            %nowa wartoœæ do ramki, przesuniêcie reszty
 end
 
-fprintf("Po:    [");
+fprintf('Po:    [');
 for i = 1 : length(output)
-    fprintf("%d ", output(i));
+    fprintf('%d ', output(i));
 end
-fprintf("\b]\n");
+fprintf('\b]\n');
