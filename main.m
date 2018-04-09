@@ -14,7 +14,7 @@ test_sig.setBitTrue(3);
 test_sig.setBitTrue(12);
 test_sig.printSignal();     %powinno wypisaæ 1010000000010000 i tak te¿ siê dzieje
 
-scrambler = scrambler();    %obiekt scramblera
+scrambler = Scrambler();    %obiekt scramblera
 
 copy_sig = test_sig.copy(); %kopia sygna³u zostanie zescramblowana
 

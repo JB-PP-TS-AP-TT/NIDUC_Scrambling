@@ -1,4 +1,4 @@
-classdef scrambler < handle
+classdef Scrambler < handle
     
     properties (Access = private)
         default_seed
@@ -6,7 +6,7 @@ classdef scrambler < handle
     end
     
     methods
-        function this = scrambler(seed) %konstruktor
+        function this = Scrambler(seed) %konstruktor
             if(nargin == 0)             %number of function input arguments = 0 -> konstruktor bezparametryczny
                 this.default_seed = [0, 1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 1, 1];
                 this.lfs_register = this.default_seed;
