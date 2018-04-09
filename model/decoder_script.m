@@ -4,11 +4,11 @@ addpath(genpath('helper'));
 % demo Ethernet
 decoderEthernet = DecoderEthernet();
 
-% parameters
+% parametry
 signalSize = 113;
-desyncAt = 12; % less than signalSize!!
+desyncAt = 12; % mniejszy ni¿ signalSize!!
 
-% create a random signal
+% tworzenie losowego sygna³u
 signal = Signal(signalSize);
 for i = 1 : signalSize 
     if round(rand())
@@ -16,25 +16,25 @@ for i = 1 : signalSize
     end
 end
 
-% append zeroes to match ethernet 64-bit framing
+% dope³nia zera, aby dopasowaæ ramkê ethernet 64-bitow¹
 signal = Helper.appendToAlign64(signal);
 
-% decoding demo
+% dekodowanie demo
 
 signal = decoderEthernet.decode(signal);
 
-disp("Signal after decoding:");
+disp("Sygna³ przed dekodowaniem:");
 signal.disp();
-fprintf("Size: %d \n", signal.getSize());
-fprintf("Was good: %d \n", decoderEthernet.wasGood());
+fprintf("Rozmiar: %d \n", signal.getSize());
+fprintf("By³ poprawny: %d \n", decoderEthernet.wasGood());
 
-% SYNC-LOSS SIMULATION
+% SYNC-LOSS SYMULACJA
 
 disp(" ");
-disp("Sync loss simulation: ");
+disp("Sync loss symulacja: ");
 disp(" ");
 
-% doubling bit at desyncAt index
+% podwojenie bitu przy desyncAt indeks
 newSignal = Signal(signal.getSize() + 1);
 for i = 1 : desyncAt
     newSignal.setBitAt(i, signal.getBitAt(i));
@@ -45,14 +45,14 @@ for i = desyncAt + 2 : newSignal.getSize()
 end
 signal = newSignal;
 
-disp("Signal after desync:");
+disp("Sygna³ po desynchronizacji:");
 signal.disp();
-fprintf("Size: %d \n", signal.getSize());
+fprintf("Rozmiar: %d \n", signal.getSize());
 
 
 signal = decoderEthernet.decode(signal);
 
-disp("Signal after decoding:");
+disp("Signal po dekodowaniu:");
 signal.disp();
-fprintf("Size: %d \n", signal.getSize());
-fprintf("Was good: %d\n", decoderEthernet.wasGood());
+fprintf("Rozmiar: %d \n", signal.getSize());
+fprintf("By³ poprawny: %d\n", decoderEthernet.wasGood());

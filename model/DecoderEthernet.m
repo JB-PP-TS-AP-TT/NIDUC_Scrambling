@@ -1,16 +1,15 @@
 classdef DecoderEthernet < handle
-    %ETHERNETDECODER Summary of this class goes here
     
     properties (Access = private)
         errorFlag,
-        resyncPreamblesToCheck = 2, % number of preambles to check both to the left and right side
+        resyncPreamblesToCheck = 2, % liczba preambu³ do sprawdzenia, zarówno po lewej, jak i po prawej stronie
         resyncPreambleCheckRange = 2
     end
     
     methods (Access = private)
         function bestPreambleScore = checkForPreambleInRange(obj, signal, i)
-           bestPreambleScore = -1; % negative score if preamble is not found
-           
+           bestPreambleScore = -1; % negatywny wynik jeœli preambu³a nie zosta³a znaleziona
+          
            leftRange = i - obj.resyncPreambleCheckRange;
            rightRange = obj.resyncPreambleCheckRange*2 + leftRange;
            if leftRange < 1
@@ -31,8 +30,7 @@ classdef DecoderEthernet < handle
         end
         
         function dataIndex = resync(obj, signal, badFrameIndex)
-            % scores for preambles are 0, and they are not yet found so
-            % indexex are -1
+            % wyniki dla preambu³y wynosz¹ 0, i nie zosta³y jeszcze znalezione, wiêc indekx = -1
             potentialPreamblesScores = zeros(1,2*obj.resyncPreamblesToCheck);
             potentialPreamblesIndexes = zeros(1,2*obj.resyncPreamblesToCheck);
             
@@ -69,7 +67,7 @@ classdef DecoderEthernet < handle
                        currentPreambleIndex = currentPreambleIndex + 66;
                     end
                     
-                    % save score
+                    % zapanie wyniku
                     potentialPreamblesScores(foundPreamblesLeft) = score;
                     
                     iterator = iterator - 1;
@@ -105,14 +103,14 @@ classdef DecoderEthernet < handle
                        currentPreambleIndex = currentPreambleIndex + 66;
                     end
                     
-                    % save score
+                    % zapisanie wyniku
                     potentialPreamblesScores(foundPreamblesRight + foundPreamblesLeft) = score;
                     
                     iterator = iterator + 1;
                 end
             end
             
-            % find best match
+            % znalezienie najlepszego dopasowania
             bestMatchScore = -55555;
             bestMatchIndex = -1;
             for i = 1 : 2*obj.resyncPreamblesToCheck
@@ -129,17 +127,17 @@ classdef DecoderEthernet < handle
     
     methods
         function decodedSignal = decode(obj, signal)
-            % clear previous error flag
+            % czyszczenie poprzednich flag z b³êdami
             obj.errorFlag = false;
             
             signalSize = signal.getSize();
             numberOfFrames = floor(signalSize/66);
             decodedSignal = Signal(numberOfFrames*64);
             
-            k = 1; % holds decodedSignal iterator index
+            k = 1; % przechowuje decodedSignal indeks iteratorau
             i = 1;
             while i < signalSize
-                % check for preamble
+                % sprawdzenie dla preambu³y
                 if signal.getBitAt(i) ~= 0 || signal.getBitAt(i+1) ~= 1
                     obj.errorFlag = true;
                     i = obj.resync(signal, i);
@@ -148,7 +146,7 @@ classdef DecoderEthernet < handle
                 end
                     
                 limit = i + 64;
-                %copy all the (64 bit length) frame bits
+                %kopiowanie wszystkich bityów ramki o d³ugoœci 64 bitów
                 while  i <= signalSize && i < limit
                     decodedSignal.setBitAt(k, signal.getBitAt(i));
                     k = k + 1;

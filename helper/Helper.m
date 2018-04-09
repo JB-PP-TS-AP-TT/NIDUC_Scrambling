@@ -1,5 +1,5 @@
 classdef Helper
-    %HELPER class containg some helper methods
+    %HELPER klasa zawiraj¹ce niektóre metody pomocnicze
     
     methods (Static)
         function o = appendToAlign64(signal)
