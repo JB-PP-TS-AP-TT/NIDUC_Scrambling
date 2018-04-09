@@ -1,24 +1,24 @@
 clear;
 
-signal = [0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1,];
+signal = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
 frame  = [0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 0, 0, 0, 1, 1, 1];
-output = zeros(32);
+temp_frame = frame;
 
-fprintf('Przed: [');
+fprintf('Signal:    [');
 for i = 1 : length(signal)
     fprintf('%d ', signal(i));
 end
 fprintf('\b]\n');
 
 for i = 1 : length(signal)
-    x = xor(frame(1), xor(frame(40), frame(59)));   %xor bitu 1, 40, 59
-    x = xor(signal(i), x);                          %xor bitu wejœcia i wartoœci pseudolosowej
-    output(i) = x;                                  %dla czytelnoœci w osobny sygna³
-    frame = [output(i), frame(1:end-1)];            %nowa wartoœæ do ramki, przesuniêcie reszty
+    x = xor(temp_frame(1), xor(temp_frame(40), temp_frame(59)));    %xor bitu 1, 40, 59
+    temp_frame(2:end) = temp_frame(1:(end-1));                      %przesuniêcie ramki o jeden
+    temp_frame(1) = x;                                              %na pierwsz¹ pozycjê ramki wprowadzamy wynik xor
+    signal(i) = xor(signal(i), x);                                  %xor bitu wejœcia(sygna³u) i wartoœci pseudolosowej(otrzymanej z ramki)       
 end
 
-fprintf('Po:    [');
-for i = 1 : length(output)
-    fprintf('%d ', output(i));
+fprintf('Scrambled: [');
+for i = 1 : length(signal)
+    fprintf('%d ', signal(i));
 end
 fprintf('\b]\n');
