@@ -6,9 +6,9 @@ addpath(genpath('model'));
 %zdefiniowanej w glownyWidok.m, która z kolei odpala figure
 %glownyWidok.fig, stworzon¹ przy pomocy GUIDE (lewym na glownyWidok.fig i
 %edytuj w GUIDE)
-%ainView();
+%mainView();
 
-test_sig = signal(16);
+test_sig = Signal(16);
 test_sig.setBitTrue(1);
 test_sig.setBitTrue(3);
 test_sig.setBitTrue(12);
