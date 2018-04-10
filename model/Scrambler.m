@@ -27,9 +27,13 @@ classdef Scrambler < handle
                 signal.setBitAt(i, x);              %ustawienie bitu sygna³u wyjœciowego
                 
                 this.lfs_register = [signal.getBitAt(i), this.lfs_register(1:end-1)];  %przesuniêcie rejestru
-                
-                scr = signal;       %return signal
             end
+            %zwroc sygnal
+            scr = signal;        
+            %this.reset_register;
+            %podczas przesy³u ramka nie bêdzie musia³a byæ resetowana, bo w
+            %scramblerze i descramblerze bêd¹ mia³y identyczn¹ zawartoœæ
+            %i bêd¹ przesuwaæ siê zawsze o tyle samo
         end
         
         function print_register(this)   %wydruk stanu rejestru lfs
