@@ -60,15 +60,40 @@ sig_2.printSignal();
 %a o to w tym wszystkim chodzi, by sygna³y jednak nie mia³y swych sta³ych
 %"scramblowych" odpowiedników
 
+%utworzenie obiektu BER
+B = BER();
+
 %test generatora - tworzony sygna³ 16b, jak poprzednio
 G = SignalGenerator(16);
 
 sig_3 = G.generateSignal();
+B.setOrigin(sig_3);
 fprintf('SIGNAL III\n');
 sig_3.printSignal();
 sig_3= scrambler.scramble_signal(sig_3);    %scramblowanie sig_3
 fprintf('sig_3 after scrambling:\n');   
 sig_3.printSignal();                        %wydruk po scramblingu
 sig_3 = descrambler.descramble(sig_3);      %proces descramblingu
+B.setDescrambled(sig_3);
 fprintf('sig_3 after descrambling:\n');   
-sig_3.printSignal(); 
+sig_3.printSignal();
+%BER wynosi
+fprintf('BER: %d\n', B.calculateBER);   
+
+%proba dzia³ania BER na ustawionych wartoœciach
+s_o = Signal(5);
+s_d = Signal(5);
+s_o.setBitTrue(2);
+s_d.setBitTrue(3);
+B.setOrigin(s_o);
+B.setDescrambled(s_d);
+fprintf('BER: %f\n', B.calculateBER); % = 0.4 - prawid³ow
+
+%w przypadku nierowónych sygna³ów drukuje  BER = -1
+s_o2 = Signal(5);
+s_d2 = Signal(6);
+s_o2.setBitTrue(2);
+s_d2.setBitTrue(3);
+B.setOrigin(s_o2);
+B.setDescrambled(s_d2);
+fprintf('BER: %f\n', B.calculateBER);
