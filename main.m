@@ -42,7 +42,7 @@ sig_2.printSignal();                        %powinno wypisaæ 1000000000000001 i 
 %bez wywo³ywañ w.w. obiektach funkcji resetowania ramki
 %powinno skutkowaæ otrzymaniem poprawnego SIG_2
 
-sig_2= scrambler.scramble_signal(sig_2);    %scramblowanie sig_1
+sig_2= scrambler.scramble_signal(sig_2);    %scramblowanie sig_2
 fprintf('sig_2 after scrambling:\n');   
 sig_2.printSignal();                        %wydruk po scramblingu
 sig_2 = descrambler.descramble(sig_2);      %proces descramblingu
@@ -59,3 +59,16 @@ sig_2.printSignal();
 %sygna³y otrzymujemy dwa ró¿ne zescramblowane sygna³y wynikowe
 %a o to w tym wszystkim chodzi, by sygna³y jednak nie mia³y swych sta³ych
 %"scramblowych" odpowiedników
+
+%test generatora - tworzony sygna³ 16b, jak poprzednio
+G = SignalGenerator(16);
+
+sig_3 = G.generateSignal();
+fprintf('SIGNAL III\n');
+sig_3.printSignal();
+sig_3= scrambler.scramble_signal(sig_3);    %scramblowanie sig_3
+fprintf('sig_3 after scrambling:\n');   
+sig_3.printSignal();                        %wydruk po scramblingu
+sig_3 = descrambler.descramble(sig_3);      %proces descramblingu
+fprintf('sig_3 after descrambling:\n');   
+sig_3.printSignal(); 
