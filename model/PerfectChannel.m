@@ -1,13 +1,13 @@
 classdef PerfectChannel < Channel
-    %ten kana³ nie bêdzie generowa³ przek³amañ w sygnale
+    %ten kanaï¿½ nie bï¿½dzie generowaï¿½ przekï¿½amaï¿½ w sygnale
     methods
         function this = PerfectChannel()
             this.signal = [];                   %dziedziczone z klasy abstrakcyjnej Channel
         end
         
         function sendSig(this, signal)
-            if class(signal) == "Signal"        %tylko jeœli wysy³any obiekt jest instancj¹ Signal
-                this.signal = signal.copy;      %wysy³amy kopiê sygna³u
+            if class(signal) == "Signal"        %tylko jeï¿½li wysyï¿½any obiekt jest instancjï¿½ Signal
+                this.signal = signal.copy;      %wysyï¿½amy kopiï¿½ sygnaï¿½u
             else
                 return
             end
