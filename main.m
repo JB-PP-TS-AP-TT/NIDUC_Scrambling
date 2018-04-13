@@ -18,6 +18,11 @@ sig_1.setBitTrue(16);
 fprintf('SIGNAL I\n');
 sig_1.printSignal();                        %powinno wypisaæ 1010000000010000 i tak te¿ siê dzieje
 
+enc1 = Encoder(sig_1.bits(1:16));
+enc1.encode();
+fprintf('Encoder\n');
+enc1.print();
+
 scrambler = Scrambler(LSFR);                %obiekt scramblera
 sig_1= scrambler.scramble_signal(sig_1);    %scramblowanie sig_1
 

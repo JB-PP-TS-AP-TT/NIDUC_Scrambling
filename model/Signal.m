@@ -1,5 +1,5 @@
 classdef Signal < handle
-    properties (Access = private)
+    properties
         size
         bits
     end
