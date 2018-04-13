@@ -5,7 +5,7 @@ classdef PerfectChannel < Channel
             this.signal = [];                   %dziedziczone z klasy abstrakcyjnej Channel
         end
         
-        function send_sig(this, signal)
+        function sendSig(this, signal)
             if class(signal) == "Signal"        %tylko jeœli wysy³any obiekt jest instancj¹ Signal
                 this.signal = signal.copy;      %wysy³amy kopiê sygna³u
             else
@@ -13,9 +13,11 @@ classdef PerfectChannel < Channel
             end
         end
         
-        function received = receive(this)
-            received = (isempty(this.signal)).*Signal(0) + ~(isempty(this.signal)).*this.signal; % received = (isempty(signal)) ? Signal(0) : []
-            if(~isempty(this.signal))
+        function received = receiveSig(this)
+            if(isempty(this.signal))
+                received = Signal(0);
+            else
+                received = this.signal;
                 this.signal = [];
             end
         end

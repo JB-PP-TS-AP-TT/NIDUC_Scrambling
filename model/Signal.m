@@ -14,10 +14,10 @@ classdef Signal < handle
                         this.bits(i) = false;   %inicjalizacja fa³szem
                     end
                 else
-                    from_file = importdata(parameter);  %jeœli parametr jest plikiem
-                    this.size = from_file(1);           %pierwszy wiersz zawiera rozmiar
+                    fromFile = importdata(parameter);  %jeœli parametr jest plikiem
+                    this.size = fromFile(1);           %pierwszy wiersz zawiera rozmiar
                     for i = 1 : this.size
-                        this.bits(i) = (from_file(k+1) == 0).*false + (from_file(k+1) ~= 0).*true;  %this.bits(i) = (from_file(k+1) == 0) ? false : true
+                        this.bits(i) = (fromFile(k+1) == 0).*false + (fromFile(k+1) ~= 0).*true;  %this.bits(i) = (from_file(k+1) == 0) ? false : true
                     end
                 end
             else
@@ -69,18 +69,18 @@ classdef Signal < handle
         end
         
         function removeBitAt(this, i)           %usuniêcie bitu na pozycji i
-           prev_bits = this.bits(1 : i-1);              %bity na mniejszych indeksach do bitu poprzedzaj¹cego i
-           next_bits = this.bits(i+1 : this.size);      %bity na wiêkszych indeksach do koñca sygna³u
+           prevBits = this.bits(1 : i-1);              %bity na mniejszych indeksach do bitu poprzedzaj¹cego i
+           nextBits = this.bits(i+1 : this.size);      %bity na wiêkszych indeksach do koñca sygna³u
            
-           this.bits = [prev_bits next_bits];           %zestawienie nowego sygna³u bez i-tego bitu
+           this.bits = [prevBits nextBits];           %zestawienie nowego sygna³u bez i-tego bitu
            this.size = this.size - 1;                   %dekrementacja iloœci bitów
         end
         
         function insertBitAt(this, i, value) %wstawienie bitu o wartoœci value na pozycjê po danym indeksie
-            prev_bits = this.bits(1 : i);            %jak w funkcji removeBitAt
-            next_bits = this.bits(i+1 : this.size);
+            prevBits = this.bits(1 : i);            %jak w funkcji removeBitAt
+            nextBits = this.bits(i+1 : this.size);
             
-            this.bits = [prev_bits logical(value) next_bits];   %zestawienie nowego sygna³u z konwersj¹ value na wartoœæ logiczn¹
+            this.bits = [prevBits logical(value) nextBits];   %zestawienie nowego sygna³u z konwersj¹ value na wartoœæ logiczn¹
             this.size = this.size + 1;                          %inkrementacja iloœci bitów
         end
         
@@ -118,6 +118,18 @@ classdef Signal < handle
             for i = 1 : this.size
                 signal = this.bits(i).*strcat(signal,'1') + (~this.bits(i)).*strcat(signal,'0');  %signal = this.bits(i) ? strcat(signal,'1') : strcat(signal,'0')
             end                       %^do stringa "doklejany" jest kolejny bit
-        end     
+        end 
     end
+    
+    methods(Static)          
+        function gen = generate(length)
+            gen = Signal(length);
+            
+            for i = 1: length
+                if(rand >= 0.85)    %rozk³ad jednostajny
+                    gen.setBitTrue(i);
+                end
+            end
+        end
+   end
 end
