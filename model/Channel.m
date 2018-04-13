@@ -6,6 +6,6 @@ classdef Channel < handle
     
     methods (Abstract)
         sendSig(this, signal)       %tylko metody wspólne dla ka¿dego kana³u
-        receive(this)
+        receiveSig(this)
     end
 end

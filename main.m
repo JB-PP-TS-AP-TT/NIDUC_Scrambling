@@ -102,3 +102,14 @@ s_d2.setBitTrue(3);
 B.setOrigin(s_o2);
 B.setDescrambled(s_d2);
 fprintf('BER: %f\n', B.calculateBER);
+
+%test kana³u BSC
+BSC = BSChannel(0.2);
+fprintf('\nsig before BSC:\n');
+sig = G.generateSignal();
+sig.printSignal();
+copy_sig = sig.copy();
+BSC.sendSig(copy_sig);
+copy_sig = BSC.receiveSig();
+copy_sig.printSignal();
+
