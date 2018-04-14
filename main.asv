@@ -25,10 +25,7 @@ enc1.encode();
 fprintf('Encoder\n');
 enc1.print();
 
-dec1 = Decoder2(enc1.newesignal(1:18));
-dec1.decode();
-fprintf('Decoder\n');
-dec1.print();
+dec1 = Decoder2(
 
 scrambler = Scrambler(LSFR);                %obiekt scramblera
 sig_1= scrambler.scrambleSignal(sig_1);    %scramblowanie sig_1
