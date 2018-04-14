@@ -20,12 +20,12 @@ sig_1.setBitTrue(16);
 fprintf('SIGNAL I\n');
 sig_1.printSignal();                        %powinno wypisa� 1010000000010000 i tak te� si� dzieje
 
-enc1 = Encoder(sig_1.bits(1:16));
+enc1 = Encoder(sig_1.bits(1:16));           %Encoder
 enc1.encode();
 fprintf('Encoder\n');
 enc1.print();
 
-dec1 = Decoder2(enc1.newesignal(1:18));
+dec1 = Decoder2(enc1.newesignal(1:18));     %Decoder
 dec1.decode();
 fprintf('Decoder\n');
 dec1.print();
