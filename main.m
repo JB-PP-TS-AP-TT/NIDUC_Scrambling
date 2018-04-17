@@ -15,18 +15,33 @@ addpath(genpath('helper'));
 G = SignalGenerator(1, 0);
 S = Scrambler();
 D = Descrambler();
+Enc = Encoder();
+Dec = Decoder2();
+H = Helper();
 
+fprintf("BEFORE ALL:\n");
 sig = G.generateSignal();
-
 sig.printSignal();
+
+%fprintf("COPIED:\n");
 cop = sig.copy();
-cop.printSignal();
+%cop.printSignal();
+
+%fprintf("SCRAMBLED:\n");
 cop = S.scrambleSignal(cop);
-cop.printSignal();
+%cop.printSignal();
+
+%fprintf("ENCODED:\n");
+cop = Enc.encode(cop);
+%cop.printSignal();
+
+%fprintf("DECODED:\n");
+cop = Dec.decode(cop);
+%cop.printSignal();
+
+fprintf("AFTER ALL:\n");
 cop = D.descrambleSignal(cop);
 cop.printSignal();
 
-copstr = cop.toString();
-fprintf("%s", copstr);
-
-
+fprintf("BER: %d\n", H.calculateBER(sig,cop));
+ 

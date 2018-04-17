@@ -1,36 +1,34 @@
 classdef Encoder < handle
 
     properties
-        input=[];
-        newesignal=[];
+        preamble;
     end
     
     methods
-        function this=Encoder(signal)
-            this.input=signal;
+        function this=Encoder()
+            this.preamble = [0 1];
         end
-        function encodedSignal = encode(this)
-            preambule = [0 1];
-            temp=1;
-            org_signal_size = length(this.input);
-            while(temp<org_signal_size)
-                if(temp+64>org_signal_size)
-                    this.newesignal=horzcat(this.newesignal,horzcat(preambule,this.input(temp:org_signal_size)));
-                    break;
+        
+        function encodedSignal = encode(this,signal)
+            encodedSignal = signal; %bo funkcja musi mieæ co zwróciæ
+            
+            if class(signal) == "Signal"
+                %w petli co 64 bity wstawimy preambule
+                p = floor( signal.getSize() / 64);
+                i = 0;
+                while(p>0)
+                    signal.insertBitAt(i, this.preamble(1));
+                    signal.insertBitAt(i+1, this.preamble(2));
+                    i = i + 66;
+                    p = p - 1; %zmniejszamy ilosc preambul do wpisania
                 end
-                this.newesignal=horzcat(this.newesignal,horzcat(preambule,this.input(temp:temp+63))); 
-                temp = temp + 64;
-                if(temp+64>org_signal_size)
-                    this.newesignal=horzcat(this.newesignal,horzcat(preambule,this.input(temp:org_signal_size)));
-                    break;
-                end
+            else
+                return 
             end
-            encodedSignal=this.newesignal;
+            
+            encodedSignal = signal; %nowy zmieniony, zakodowany sygna³
+            
         end 
-        function print(this)
-            fprintf('[ ');
-            fprintf('%d ',this.newesignal);
-            fprintf(']\n');
-        end
+     
     end
 end

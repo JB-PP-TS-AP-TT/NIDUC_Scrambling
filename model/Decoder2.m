@@ -1,33 +1,34 @@
 classdef Decoder2 < handle
 
     properties
-        input=[];
-        newesignal=[];
     end
     
     methods
-        function this=Decoder2(signal)
-            this.input=signal;
+        
+        function this=Decoder2()
         end
-        function decodedSignal = decode(this)
-            this.newesignal=[]; %bedzie zbierala 64 bitowe ramki
-
-        while(~isempty(this.input))
-            if(length(this.input)<64)
-                this.input=this.input(3:length(this.input));%odciêcie pocz¹tkowych 2 bitów ostatniej ramki
-                this.newesignal=horzcat(this.newesignal,this.input(1:length(this.input))); %do³¹czenie ostatniej ramki
-                break;
+        
+        function decodedSignal = decode(this,signal)
+            decodedSignal = signal; %funkcja musi miec co zwrocic
+            
+            if class(signal) == "Signal"
+                %w petli co 64 bity wstawimy preambule
+                p = floor( signal.getSize() / 66);
+                i = 1;
+                while(p>0)
+                    signal.removeBitAt(i);
+                    signal.removeBitAt(i);
+                    i = i + 64;
+                    p = p - 1; %zmniejszamy ilosc preambul do wpisania
+                end
+            else
+                return 
             end
-            this.input=this.input(3:length(this.input));%odciêcie pocz¹tkowych 2 bitów
-            this.newesignal=horzcat(this.newesignal,this.input(1:64));
-            this.input=this.input(65:length(this.input)); %odciêcie pocz¹tkowych 64 bitów
-        end
-            decodedSignal=this.newesignal;
+            
+            decodedSignal = signal; %nowy zmieniony, zakodowany sygna³
+            
         end 
-        function print(this)
-            fprintf('[ ');
-            fprintf('%d ',this.newesignal);
-            fprintf(']\n');
-        end
+       
     end
+    
 end
