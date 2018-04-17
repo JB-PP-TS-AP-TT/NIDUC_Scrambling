@@ -22,7 +22,7 @@ function varargout = mainView(varargin)
 
 % Edit the above text to modify the response to help mainView
 
-% Last Modified by GUIDE v2.5 02-Apr-2018 19:21:04
+% Last Modified by GUIDE v2.5 18-Apr-2018 00:06:57
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -57,6 +57,9 @@ handles.output = hObject;
 
 % Update handles structure
 guidata(hObject, handles);
+movegui(hObject, 'center');
+%signalGenerator = SignalGenerator();
+
 
 % UIWAIT makes mainView wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
@@ -73,9 +76,82 @@ function varargout = mainView_OutputFcn(hObject, eventdata, handles)
 varargout{1} = handles.output;
 
 
-% --- Executes on button press in pushbutton1.
-function pushbutton1_Callback(hObject, eventdata, handles)
-% hObject    handle to pushbutton1 (see GCBO)
+% --- Executes on button press in pushbuttonGenerateSignal.
+function pushbuttonGenerateSignal_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbuttonGenerateSignal (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-disp('Hello world');
+global frame; global probability; global copySignal;
+frame = get(handles.editFrame, 'String'); %pobranie stringa z edittexta
+disp(frame);
+probability = get(handles.editProbability, 'String'); % pobranie stringa z editboxa
+disp(probability);
+signalGenerator = SignalGenerator(frame, probability);
+signal = signalGenerator.generateSignal(); %generuje sygna³
+copySignal = signal.copy();
+set(handles.textOriginalView, 'String', copySignal.toString());
+%-----------------------SCRAMBLER
+scrambler = Scrambler();
+copySignal = scrambler.scrambleSignal(copySignal);
+set(handles.textScramblerView, 'String', copySignal.toString());
+%-----------------------KODER
+encoder = Encoder();
+copySignal = encoder.encode(copySignal);
+set(handles.textEncodeView, 'String', copySignal.toString());
+
+function editFrame_Callback(hObject, eventdata, handles)
+% hObject    handle to editFrame (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of editFrame as text
+%        str2double(get(hObject,'String')) returns contents of editFrame as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function editFrame_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to editFrame (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function editProbability_Callback(hObject, eventdata, handles)
+% hObject    handle to editProbability (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of editProbability as text
+%        str2double(get(hObject,'String')) returns contents of editProbability as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function editProbability_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to editProbability (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --- Executes during object creation, after setting all properties.
+function textScramblerView_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to textScramblerView (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% --- Executes during object creation, after setting all properties.
+function textEncodeView_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to textEncodeView (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called

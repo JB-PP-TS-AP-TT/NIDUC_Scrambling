@@ -8,7 +8,7 @@ addpath(genpath('helper'));
 %zdefiniowanej w glownyWidok.m, ktï¿½ra z kolei odpala figure
 %glownyWidok.fig, stworzonï¿½ przy pomocy GUIDE (lewym na glownyWidok.fig i
 %edytuj w GUIDE)
-%mainView();
+mainView();
 
 %LSFR musi miec d³ugoœæ conajmniej 39 bitów!!!
 %LSFR = [0, 1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1];
