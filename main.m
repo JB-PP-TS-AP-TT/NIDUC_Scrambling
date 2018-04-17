@@ -1,5 +1,5 @@
 clear;
-%dziï¿½ki temu skrypty z widoki/ sï¿½ widoczne
+%dodanie œcie¿ek do folderów, klasy w nich widoczne s¹ osi¹galne
 addpath(genpath('view'));
 addpath(genpath('model'));
 addpath(genpath('helper'));
@@ -10,100 +10,23 @@ addpath(genpath('helper'));
 %edytuj w GUIDE)
 %mainView();
 
+%LSFR musi miec d³ugoœæ conajmniej 39 bitów!!!
+%LSFR = [0, 1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1];
+G = SignalGenerator(1, 0);
+S = Scrambler();
+D = Descrambler();
 
-LSFR = [0, 1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1];
+sig = G.generateSignal();
 
-sig_1 = Signal(16);                         %sygnaï¿½ nr 1 - 16b
-sig_1.setBitTrue(1);
-sig_1.setBitTrue(3);
-sig_1.setBitTrue(16);
-fprintf('SIGNAL I\n');
-sig_1.printSignal();                        %powinno wypisaï¿½ 1010000000010000 i tak teï¿½ siï¿½ dzieje
-
-enc1 = Encoder(sig_1.bits(1:16));           %Encoder
-enc1.encode();
-fprintf('Encoder\n');
-enc1.print();
-
-dec1 = Decoder2(enc1.newesignal(1:18));     %Decoder
-dec1.decode();
-fprintf('Decoder\n');
-dec1.print();
-
-scrambler = Scrambler(LSFR);                %obiekt scramblera
-sig_1= scrambler.scrambleSignal(sig_1);    %scramblowanie sig_1
-
-fprintf('sig_1 after scrambling:\n');   
-sig_1.printSignal();                        %wydruk po scramblingu
-
-descrambler = Descrambler(LSFR);            %obiekt descramblera
-sig_1 = descrambler.descramble(sig_1);      %proces descramblingu
-
-fprintf('sig_1 after descrambling:\n');   
-sig_1.printSignal();                        %wydruk po scramblingu
-
-sig_2 = Signal(16);                         %sygnaï¿½ nr 2 - 16b
-sig_2.setBitTrue(1);
-sig_2.setBitTrue(16);
-fprintf('SIGNAL II\n');
-sig_2.printSignal();                        %powinno wypisaï¿½ 1000000000000001 i tak teï¿½ siï¿½ dzieje
-
-%obiekty scrambler/descrambler powinny mieï¿½ swoje ramki(lokalne LSFR) przesuniï¿½te o tï¿½
-%samï¿½ iloï¿½ï¿½ bitï¿½w oraz ich zawartoï¿½ï¿½ powinna byc taka sama
-%wobec tego puszczenie procesu scramblingu i descramblingu raz jeszcze
-%bez wywoï¿½ywaï¿½ w.w. obiektach funkcji resetowania ramki
-%powinno skutkowaï¿½ otrzymaniem poprawnego SIG_2
-
-sig_2= scrambler.scrambleSignal(sig_2);    %scramblowanie sig_2
-fprintf('sig_2 after scrambling:\n');   
-sig_2.printSignal();                        %wydruk po scramblingu
-sig_2 = descrambler.descramble(sig_2);      %proces descramblingu
-fprintf('sig_2 after descrambling:\n');   
-sig_2.printSignal(); 
-
-%to o czym napisaï¿½em wyï¿½ej jest dowodem, ï¿½e w klasie Scram/Descram 
-%funkcje reset sï¿½ niepotrzebne
-%dodatkowo niepotrzebne jest przechowywanie dwï¿½ch kopii ramek
-%gdyï¿½ raz przesï¿½ane do poszczegï¿½lnych obiektï¿½w
-%bï¿½dï¿½ generowaï¿½ siï¿½ automatycznie i synchronicznie
-
-%polecam zakomentowaï¿½ sobie wiersz 16 aby zobaczyï¿½ ï¿½e majï¿½c dwa identyczne
-%sygnaï¿½y otrzymujemy dwa rï¿½ne zescramblowane sygnaï¿½y wynikowe
-%a o to w tym wszystkim chodzi, by sygnaï¿½y jednak nie miaï¿½y swych staï¿½ych
-%"scramblowych" odpowiednikï¿½w
-
-
-%test generatora - tworzony sygnaï¿½ 64b
-sig_3 = Signal.generate(64);
-sig_4 = sig_3.copy();       %kopia robocza
-
-fprintf('SIGNAL III\n');
-sig_3.printSignal();
-
-scrambler.scrambleSignal(sig_4);
-fprintf('sig_3 after scrambling:\n');   
-sig_4.printSignal();
-
-sig_4 = descrambler.descramble(sig_4);
-fprintf('sig_3 after descrambling:\n');   
-sig_3.printSignal();
-
-fprintf('BER: %d\n', Helper.calculateBER(sig_3, sig_4));
-
-%przakï¿½amanie w wyjï¿½ciowym sygnale
-sig_4.negBitAt(21);
-sig_4.negBitAt(37);
-sig_4.negBitAt(14);
-sig_4.negBitAt(5);
-fprintf('BER after negations at 21/37/14/5 positions in output signal:\n');
-fprintf('BER: %f\n', Helper.calculateBER(sig_3, sig_4));
-
-%test kanaï¿½u BSC
-BSC = BSChannel(0.2);
-fprintf('\nsig before BSC:\n');
-sig = Signal.generate(64);
 sig.printSignal();
-copy_sig = sig.copy();
-BSC.sendSig(copy_sig);
-copy_sig = BSC.receiveSig();
-copy_sig.printSignal();
+cop = sig.copy();
+cop.printSignal();
+cop = S.scrambleSignal(cop);
+cop.printSignal();
+cop = D.descrambleSignal(cop);
+cop.printSignal();
+
+copstr = cop.toString();
+fprintf("%s", copstr);
+
+

@@ -76,7 +76,7 @@ classdef Signal < handle
            this.size = this.size - 1;                   %dekrementacja iloœci bitów
         end
         
-        function insertBitAt(this, i, value) %wstawienie bitu o wartoœci value na pozycjê po danym indeksie
+        function insertBitAt(this, i, value) %wstawienie bitu o wartoœci value na pozycjê PO danym indeksie
             prevBits = this.bits(1 : i);            %jak w funkcji removeBitAt
             nextBits = this.bits(i+1 : this.size);
             
@@ -92,7 +92,7 @@ classdef Signal < handle
         
         function value = decimalValue(this) %zwraca wartoœc decymaln¹ sygna³u
             value = 0;  %inicjalizacja zerem
-            for i = 1 : value.size
+            for i = 1 : this.size
                 value = value + (2 ^ (i - 1)) * this.getBitAt(i);
             end
         end
@@ -112,24 +112,17 @@ classdef Signal < handle
             end
             fprintf(']\n');
         end
-        %
+        
         function signal = toString(this)    %konwersja sygna³u na string, u¿ywamy
             signal = string();
             for i = 1 : this.size
-                signal = this.bits(i).*strcat(signal,'1') + (~this.bits(i)).*strcat(signal,'0');  %signal = this.bits(i) ? strcat(signal,'1') : strcat(signal,'0')
-            end                       %^do stringa "doklejany" jest kolejny bit
+                if(this.bits(i))
+                    signal = strcat(signal, '1');
+                else
+                    signal = strcat(signal, '0');
+                end
+            end                       
         end 
     end
     
-    methods(Static)          
-        function gen = generate(length)
-            gen = Signal(length);
-            
-            for i = 1: length
-                if(rand >= 0.85)    %rozk³ad jednostajny
-                    gen.setBitTrue(i);
-                end
-            end
-        end
-   end
 end

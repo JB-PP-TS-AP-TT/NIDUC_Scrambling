@@ -1,8 +1,8 @@
 classdef BSChannel < Channel
-    %BSC - binary symetric channel
+          %BSC - binary symetric channel
     
     properties (Access = private)
-        p %probability
+        p %prawdopodobienstwo przek³amania
     end
     
     methods
@@ -17,7 +17,7 @@ classdef BSChannel < Channel
                 end
             end
             obj.signal = [];
-        end %end of constructor
+        end %koniec konstruktora
         
         function sendSig(obj, signal)
             if class(signal) == "Signal"        %tylko jeœli wysy³any obiekt jest instancj¹ Signal
@@ -29,10 +29,10 @@ classdef BSChannel < Channel
         end
        
         function received = receiveSig(obj)
-            if(~isempty(obj.signal)) %je¿eli signal jest, to go wyœlij
+            if(~isempty(obj.signal))    %je¿eli signal jest, to go wyœlij
                 received = obj.signal;
                 obj.signal = [];
-            else % je¿eli go nie ma to wyslij pusty wektor
+            else                        % je¿eli go nie ma to wyslij pusty wektor
                 received = [];
                 obj.signal = [];
             end
@@ -47,8 +47,10 @@ classdef BSChannel < Channel
             for i=1 : obj.signal.getSize()
                 temp_sig(i) = obj.signal.getBitAt(i);
             end
+            
             %wektor ten mo¿e byæ przepuszczony przez funkcjê bsc
             temp_sig = bsc(temp_sig,obj.p); %do funkcji bsc przekazujemy ustawione prawdopodobieñstwo - p
+            
             %nastêpnie nale¿y ustawiæ bity przechowywanego sygna³u, je¿eli
             %w kanale zosta³y one zmienione
             for i=1 : obj.signal.getSize()
