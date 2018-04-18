@@ -22,7 +22,7 @@ function varargout = mainView(varargin)
 
 % Edit the above text to modify the response to help mainView
 
-% Last Modified by GUIDE v2.5 18-Apr-2018 00:06:57
+% Last Modified by GUIDE v2.5 18-Apr-2018 01:33:55
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -81,23 +81,14 @@ function pushbuttonGenerateSignal_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbuttonGenerateSignal (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-global frame; global probability; global copySignal;
+global frame; global probability; global copySignal; global signal; global copyOld;
 frame = get(handles.editFrame, 'String'); %pobranie stringa z edittexta
 disp(frame);
 probability = get(handles.editProbability, 'String'); % pobranie stringa z editboxa
 disp(probability);
-signalGenerator = SignalGenerator(frame, probability);
+signalGenerator = SignalGenerator(str2num(frame), str2num(probability));
 signal = signalGenerator.generateSignal(); %generuje sygna³
-copySignal = signal.copy();
-set(handles.textOriginalView, 'String', copySignal.toString());
-%-----------------------SCRAMBLER
-scrambler = Scrambler();
-copySignal = scrambler.scrambleSignal(copySignal);
-set(handles.textScramblerView, 'String', copySignal.toString());
-%-----------------------KODER
-encoder = Encoder();
-copySignal = encoder.encode(copySignal);
-set(handles.textEncodeView, 'String', copySignal.toString());
+set(handles.textOriginalView, 'String', signal.toString());
 
 function editFrame_Callback(hObject, eventdata, handles)
 % hObject    handle to editFrame (see GCBO)
@@ -155,3 +146,60 @@ function textEncodeView_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to textEncodeView (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
+
+
+% --- Executes on button press in rbPerfectChannel.
+function rbPerfectChannel_Callback(hObject, eventdata, handles)
+global channel;
+channel = PerfectChannel();
+% hObject    handle to rbPerfectChannel (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of rbPerfectChannel
+
+
+% --- Executes on button press in rbBSChannel.
+function rbBSChannel_Callback(hObject, eventdata, handles)
+global channel; global probability;
+channel = BSChannel(str2num(probability));
+% hObject    handle to rbBSChannel (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of rbBSChannel
+
+
+% --- Executes on button press in pushbuttonSend.
+function pushbuttonSend_Callback(hObject, eventdata, handles)
+global channel; global signal;
+
+copySignal = signal.copy();
+set(handles.textOriginalView, 'String', copySignal.toString());
+%-----------------------SCRAMBLER
+scrambler = Scrambler();
+copySignal = scrambler.scrambleSignal(copySignal);
+set(handles.textScramblerView, 'String', copySignal.toString());
+%-----------------------KODER
+encoder = Encoder();
+copySignal = encoder.encode(copySignal);
+copyOld = copySignal;
+set(handles.textEncodeView, 'String', copySignal.toString());
+
+%--------------SEND
+channel.sendSig(copySignal);
+copySignal = channel.receiveSig();
+set(handles.textAfterSend, 'String', copySignal.toString());
+%--------------DECODE
+decoder = Decoder2();
+copySignal = decoder.decode(copySignal);
+set(handles.textDecoderView, 'String', copySignal.toString());
+%--------------DESCRAMBLE
+descrambler = Descrambler();
+copySignal = descrambler.descrambleSignal(copySignal);
+set(handles.textDescramblerView, 'String', copySignal.toString());
+%--------------BER
+set(handles.berVal, 'String', Helper.calculateBER(signal, copySignal));
+% hObject    handle to pushbuttonSend (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)

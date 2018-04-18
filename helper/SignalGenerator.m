@@ -9,7 +9,7 @@ classdef SignalGenerator < handle
     
     methods (Access  = public)
         function obj = SignalGenerator(num, prob)
-            if((prob>=0 & prob<=1) & num >=0)
+            if((prob>=0 && prob<=1) && num >=0)
                 obj.p = prob;
                 obj.numOfFrames = num;
             else
@@ -19,7 +19,7 @@ classdef SignalGenerator < handle
         end
         
         function setProbability(obj, prob)
-            if(prob>=0 & prob<=1)
+            if(prob>=0 && prob<=1)
                 obj.p = prob;
             else
                 obj.p = 0;
