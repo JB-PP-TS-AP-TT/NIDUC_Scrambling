@@ -12,36 +12,36 @@ mainView();
 
 %LSFR musi miec d³ugoœæ conajmniej 39 bitów!!!
 %LSFR = [0, 1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1];
-G = SignalGenerator(1, 0);
-S = Scrambler();
-D = Descrambler();
-Enc = Encoder();
-Dec = Decoder2();
-H = Helper();
+%G = SignalGenerator(1, 0);
+%S = Scrambler();
+%D = Descrambler();
+%Enc = Encoder();
+%Dec = Decoder2();
+%H = Helper();
 
-fprintf("BEFORE ALL:\n");
-sig = G.generateSignal();
-sig.printSignal();
+%fprintf("BEFORE ALL:\n");
+%sig = G.generateSignal();
+%sig.printSignal();
 
 %fprintf("COPIED:\n");
-cop = sig.copy();
+%cop = sig.copy();
 %cop.printSignal();
 
 %fprintf("SCRAMBLED:\n");
-cop = S.scrambleSignal(cop);
+%cop = S.scrambleSignal(cop);
 %cop.printSignal();
 
 %fprintf("ENCODED:\n");
-cop = Enc.encode(cop);
+%cop = Enc.encode(cop);
 %cop.printSignal();
 
 %fprintf("DECODED:\n");
-cop = Dec.decode(cop);
+%cop = Dec.decode(cop);
 %cop.printSignal();
 
-fprintf("AFTER ALL:\n");
-cop = D.descrambleSignal(cop);
-cop.printSignal();
+%fprintf("AFTER ALL:\n");
+%cop = D.descrambleSignal(cop);
+%cop.printSignal();
 
-fprintf("BER: %d\n", H.calculateBER(sig,cop));
+%fprintf("BER: %d\n", H.calculateBER(sig,cop));
  

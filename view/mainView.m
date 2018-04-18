@@ -81,13 +81,13 @@ function pushbuttonGenerateSignal_Callback(hObject, eventdata, handles)
 % hObject    handle to pushbuttonGenerateSignal (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-global frame; global probability; global copySignal; global signal; global copyOld;
+global frame; global probability; global copySignal; global signal;
 frame = get(handles.editFrame, 'String'); %pobranie stringa z edittexta
 disp(frame);
 probability = get(handles.editProbability, 'String'); % pobranie stringa z editboxa
 disp(probability);
 signalGenerator = SignalGenerator(str2num(frame), str2num(probability));
-signal = signalGenerator.generateSignal(); %generuje sygna³
+signal = signalGenerator.generateSignal(); %generuje sygnaï¿½
 set(handles.textOriginalView, 'String', signal.toString());
 
 function editFrame_Callback(hObject, eventdata, handles)
