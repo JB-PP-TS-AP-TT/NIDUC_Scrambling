@@ -35,7 +35,7 @@ classdef Descrambler < handle
             s = signal;
         end
         
-        function print_LSFR(this)   %wydruk stanu rejestru tempLSFR
+        function printLSFR(this)   %wydruk stanu rejestru tempLSFR
             fprintf('LSFR :\n[');
             for i = 1 : size(this.tempLSFR,2)
                 fprintf('%d, ', this.tempLSFR(i));

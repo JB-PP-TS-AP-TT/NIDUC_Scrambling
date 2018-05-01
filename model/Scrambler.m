@@ -16,7 +16,7 @@ classdef Scrambler < handle
             end
         end
         
-        function resetRegister(this)    %reset rejestru do stanu pocz¹tkowego
+        function resetLSFR(this)    %reset rejestru do stanu pocz¹tkowego
             this.tempLSFR = this.defaultLSFR;
         end
         
@@ -30,13 +30,13 @@ classdef Scrambler < handle
             end
             %zwroc sygnal
             scr = signal;        
-            %this.resetRegister;
+            %this.resetLSFR;
             %podczas przesy³u ramka nie bêdzie musia³a byæ resetowana, bo w
             %scramblerze i descramblerze bêd¹ mia³y identyczn¹ zawartoœæ
             %i bêd¹ przesuwaæ siê zawsze o tyle samo
         end
         
-        function print_LSFR(this)       %wydruk stanu rejestru tempLSFR
+        function printLSFR(this)       %wydruk stanu rejestru tempLSFR
             fprintf('LSFR:\n[');
             for i = 1 : size(this.tempLSFR,2)
                 fprintf('%d, ', this.tempLSFR(i));
