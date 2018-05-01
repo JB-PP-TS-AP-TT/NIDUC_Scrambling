@@ -64,7 +64,7 @@ classdef Signal < handle
             if (i >= 1 && 1 <=this.size)
                 this.bits(i) = ~this.bits(i);
             else
-                disp('negBitAt(' + i + ') Index out of bound! Signal is ' + this.size + 'b!');
+                %disp('negBitAt(' + i + ') Index out of bound! Signal is ' + this.size + 'b!');
             end
         end
         
@@ -106,9 +106,12 @@ classdef Signal < handle
         
         function printSignal(this)          %wydruk sygna³u
             disp('Current Signal: ');
-            fprintf('[ ');
+            fprintf('[\n');
             for i = 1 : this.size
                fprintf('%d ', this.bits(i));
+               if(mod(i,64) == 0)
+                   fprintf("\n");
+               end
             end
             fprintf(']\n');
         end
