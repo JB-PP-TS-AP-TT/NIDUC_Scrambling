@@ -61,7 +61,7 @@ classdef Signal < handle
         end
         
         function negBitAt(this, i)              %negacja bitu na pozycji i
-            if (i >= 1 && 1 <=this.size)
+            if (i >= 1 && i <=this.size)
                 this.bits(i) = ~this.bits(i);
             else
                 %disp('negBitAt(' + i + ') Index out of bound! Signal is ' + this.size + 'b!');

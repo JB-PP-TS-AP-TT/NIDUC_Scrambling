@@ -13,10 +13,11 @@ addpath(genpath('helper'));
 %LSFR musi miec d³ugoœæ conajmniej 39 bitów!!!
 %LSFR = [0, 1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1];
 G = SignalGenerator(3, 0);
-S = Scrambler();
-D = Descrambler();
-Enc = Encoder();
-Dec = Decoder2();
+%S = Scrambler();
+%D = Descrambler();
+%Enc = Encoder();
+%Dec = Decoder2();
+CC = CustomChannel(0,0,4);
 H = Helper();
 
 fprintf("BEFORE ALL:\n");
@@ -32,14 +33,18 @@ cop = sig.copy();
 %cop.printSignal();
 
 %fprintf("ENCODED:\n");
-cop = Enc.encode(cop);
+%cop = Enc.encode(cop);
 %cop.printSignal();
 
-cop.setBitTrue(67); %preambula 11
+%cop.setBitTrue(67); %preambula 11
 
 %fprintf("DECODED:\n");
-cop = Dec.decode(cop);
+%cop = Dec.decode(cop);
 %cop.printSignal();
+
+%TEST CUSTOM CHANNEL
+CC.sendSig(cop);
+cop = CC.receiveSig();
 
 fprintf("AFTER ALL:\n");
 %cop = D.descrambleSignal(cop);

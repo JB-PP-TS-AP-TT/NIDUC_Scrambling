@@ -12,12 +12,30 @@ classdef CustomChannel < Channel
         
         function this = CustomChannel(prob, desynch, period)
             
+            if(prob<=1 && prob>=0)
+                this.probability = prob;
+            else
+                this.probability = 0;
+            end
+            
+            if(desynch>1)
+                this.desynchNumOfBits = desynch;
+            else
+                this.desynchNumOfBits = 13;
+            end
+            
+            if(period>0)
+                this.periodNumOfBits = period;
+            else
+                this.periodNumOfBits = 0;
+            end
+            
         end
         
         function sendSig(this, signal)
             if (class(signal) == "Signal")      %tylko jeœli wysy³any obiekt jest instancj¹ Signal
                 this.signal = signal.copy;      %wysy³amy kopiê sygna³u do kana³u
-                this.passThroughCC;             %przepuszczenie kopii sygna³u przez CC
+                this.passThroughCC();             %przepuszczenie kopii sygna³u przez CC
             else
                 return
             end
@@ -43,35 +61,35 @@ classdef CustomChannel < Channel
         end
         
         function BSC(this)
-            temp_sig = zeroes(this.signal.getSize());
-            for i=1 : this.signal.getSize()
-                temp_sig(i) = this.signal.getBitAt(i);
-            end
-            temp_sig = bsc(temp_sig, this.probability);
-            for i=1 : this.signal.getSize()
-                this.signal.setBitAt(i, temp_sig(i));
+            if(this.probability ~= 0)
+                temp_sig = zeros(this.signal.getSize());
+                for i=1 : this.signal.getSize()
+                    temp_sig(i) = this.signal.getBitAt(i);
+                end
+                temp_sig = bsc(temp_sig, this.probability);
+                for i=1 : this.signal.getSize()
+                    this.signal.setBitAt(i, temp_sig(i));
+                end
             end
         end
         
         function periodicDistortion(this)
-            k = floor(this.signal.getSize()/this.periodNumOfBits);
-            i = this.periodNumOfBits;
-            while(k>0)
-                if(this.signal.getBitAt(i) == 1)
-                    this.signal.setBitFalse(i);
-                else
-                    this.signal.setBitTrue(i);
+            if(this.periodNumOfBits ~= 0)
+                k = floor(this.signal.getSize()/this.periodNumOfBits);
+                i = this.periodNumOfBits;
+                while(k>0)
+                    this.signal.negBitAt(i);
+                    i = i + this.periodNumOfBits;
+                    k = k - 1;
                 end
-                i = i + this.periodNumOfBits;
-                k = k - 1;
             end
         end
         
         function desynchronization(this)
             counter = 0;
             currentDesynchBit = this.signal.getBitAt(1);
-            
-            for i=1 : this.signal.getSize();
+            i=1;
+            while(i <= this.signal.getSize())
                 
                 if(this.signal.getBitAt(i) == currentDesynchBit)
                     counter = counter + 1;
@@ -80,17 +98,21 @@ classdef CustomChannel < Channel
                     counter = 1;
                 end
                 
-                if(counter == this.desynchNumOfBits)
+                if(counter >= this.desynchNumOfBits)
                     %w przypadku desynchronizacji
-                    %kolejne x bity sa przeklamywane
-                    %aktualnie dwa 
+                    %kolejne x bitow bedzie przeklamywanych
+                    %aktualnie dwa, mo¿na zwiêkszyæ na 4,8...
                     %trzeba ustalic jednoznacznie na ile sie decydujemy
                     this.signal.negBitAt(i);
                     this.signal.negBitAt(i+1);
+                    i = i + 2;
+                else
+                    i = i + 1;
                 end
                 
             end
         end
+        
     end
     
 end
