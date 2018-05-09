@@ -15,12 +15,12 @@ addpath(genpath('helper'));
 
 %LSFR musi miec d³ugoœæ conajmniej 39 bitów!!!
 %LSFR = [0, 1, 0, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1];
-G = SignalGenerator(16, 0);
+G = SignalGenerator(4, 0);
 S = Scrambler();
 D = Descrambler();
 Enc = Encoder();
 Dec = Decoder2();
-CC = CustomChannel(0.01,0,64);%bsc = 0.5, desynch = 13, period=64
+CC = CustomChannel(0.02,0,0);%bsc = 0.02, desynch = 21, period=0
 H = Helper();
 
 fprintf("BEFORE ALL:\n");

@@ -1,4 +1,4 @@
-classdef CustomChannel < Channel
+ classdef CustomChannel < Channel
     %CUSTOMCHANNEL Summary of this class goes here
     %   Detailed explanation goes here
     
@@ -21,7 +21,7 @@ classdef CustomChannel < Channel
             if(desynch>1)
                 this.desynchNumOfBits = desynch;
             else
-                this.desynchNumOfBits = 13;
+                this.desynchNumOfBits = 21; %tu nale¿y przyj¹æ jedn¹ wartoœæ, która bêdzie domyslna, a najlepiej niech pochodzi z jakiejœæ normy ITU, czy ISO
             end
             
             if(period>0)
