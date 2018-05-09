@@ -98,15 +98,29 @@
                     counter = 1;
                 end
                 
+                %je¿eli pojawi siê k-te wyst¹pienie bitu to
+                %desynchronizacja, gdzie k wyznacza defacto desynchNumOfBits
                 if(counter >= this.desynchNumOfBits)
-                    %w przypadku desynchronizacji
-                    %kolejne x bitow bedzie przeklamywanych
-                    %aktualnie dwa, mo¿na zwiêkszyæ na 4,8...
-                    %trzeba ustalic jednoznacznie na ile sie decydujemy
-                    this.signal.negBitAt(i);
-                    this.signal.negBitAt(i+1);
-                    i = i + 2;
+                    %desynchronizacja bêdzie polegaæ na pseudoloswym
+                    %wstawieniu lub usuniêciu aktualnie przetwarzanego 
+                    %bitu, który siê powtórzy³
+                    if(rand()>0.5)
+                        %usuniêcie bitu
+                        this.signal.removeBitAt(i);
+                        %iterator i wskazuje na przesuniêtu o jeden w lewo
+                        %bit, zatem nie trzeba modyfikowaæ i
+                    else
+                        %wstawienie bitu powtarzaj¹cego siê na pozycjê
+                        %za indeksem i
+                        this.signal.insertBitAt(i, currentDesynchBit);
+                        %i wskazuje na bit przed nowym bitem zatem nale¿y
+                        %przesun¹æ i za nowo wstawiony bit
+                        %inaczej na kolejny bit oryginalnego sygna³u
+                        i = i + 2;
+                    end
                 else
+                    %je¿eli desynchNumOfBits nie zosta³a przekroczona
+                    %to po prostu przechodzimy z i do nastepnego znaku
                     i = i + 1;
                 end
                 
