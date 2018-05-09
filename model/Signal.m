@@ -28,16 +28,19 @@ classdef Signal < handle
         %funkcje operuj¹ce bezpoœrednio na bitach
         
         function bit = getBitAt(this, i)    %getter bitu na pozycji i (zwraca jako wartoœæ liczbow¹)
-            if (i >= 1 && 1 <=this.size)
+            if (i >= 1 && i <=this.size)
                 bit = this.bits(i).*1 + ~this.bits(i).*0; %bit = (this.bits(i)) ? 1 : 0;
             else
-                disp('getBitAt(' + i +') Index out of bound! Signal is ' + this.size + 'b!');
-                bit = [];
+                %disp('getBitAt(' + i +') Index out of bound! Signal is ' + this.size + 'b!');
+                %bit = [];
+                %lepiej bêdzie zwróciæ wartoœæ sygnalizuj¹c¹ brak bitu na
+                %danej pozycji, szczególnie dla mechanizmu resynchronizacji
+                bit = -1;
             end
         end
         
         function setBitTrue(this, i)            %setter bitu na pozycji i (wartoœci¹ true)
-            if (i >= 1 && 1 <=this.size)
+            if (i >= 1 && i <=this.size)
                 this.bits(i) = true;
             else
                 disp("setBitTrue(" + i + ") Index out of bound! Signal is " + this.size + "b!");
@@ -45,7 +48,7 @@ classdef Signal < handle
         end
         
         function setBitFalse(this, i)            %setter bitu na pozycji i (wartoœci¹ false)
-            if (i >= 1 && 1 <=this.size)
+            if (i >= 1 && i <=this.size)
                 this.bits(i) = false;
             else
                 disp("setBitFalse(" + i + ") Index out of bound! Signal is " + this.size + "b!");
@@ -69,11 +72,13 @@ classdef Signal < handle
         end
         
         function removeBitAt(this, i)           %usuniêcie bitu na pozycji i
-           prevBits = this.bits(1 : i-1);              %bity na mniejszych indeksach do bitu poprzedzaj¹cego i
-           nextBits = this.bits(i+1 : this.size);      %bity na wiêkszych indeksach do koñca sygna³u
+            if(i >= 1 && i <=this.size)
+                 prevBits = this.bits(1 : i-1);              %bity na mniejszych indeksach do bitu poprzedzaj¹cego i
+                 nextBits = this.bits(i+1 : this.size);      %bity na wiêkszych indeksach do koñca sygna³u
            
-           this.bits = [prevBits nextBits];           %zestawienie nowego sygna³u bez i-tego bitu
-           this.size = this.size - 1;                   %dekrementacja iloœci bitów
+                 this.bits = [prevBits nextBits];           %zestawienie nowego sygna³u bez i-tego bitu
+                 this.size = this.size - 1;                   %dekrementacja iloœci bitów
+            end
         end
         
         function insertBitAt(this, i, value) %wstawienie bitu o wartoœci value na pozycjê PO danym indeksie
