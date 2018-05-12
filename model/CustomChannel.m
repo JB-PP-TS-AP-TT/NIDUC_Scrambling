@@ -62,7 +62,7 @@
         
         function BSC(this)
             if(this.probability ~= 0)
-                temp_sig = zeros(this.signal.getSize());
+                temp_sig = zeros(1,this.signal.getSize()); %alokacja wektora o d³ugoœci sygna³u
                 for i=1 : this.signal.getSize()
                     temp_sig(i) = this.signal.getBitAt(i);
                 end
