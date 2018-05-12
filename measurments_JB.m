@@ -7,7 +7,7 @@ addpath(genpath('helper'));
 %1)CC (bsc p=0.02) (j=0.5) (desync = 18 albo tyle ile nakazuje norma)
 %2)CC (bsc p=0.02) (j=0.8) (desync = 18 albo tyle ile nakazuje norma)
 %3)CC (bsc p=0.00) (j=0.7) (desync = 18 albo tyle ile nakazuje norma)
-G = SignalGenerator(200, 0.8);  %generator sygna³u 
+G = SignalGenerator(50, 0.5);  %generator sygna³u 
 S = Scrambler();                %scrambler
 D = Descrambler();              %descrambler
 Enc = Encoder();                %koder Ethernet
@@ -19,14 +19,14 @@ sig = G.generateSignal();
 BER = 0;
 for i=1 : 500
     cop = sig.copy();
-    cop = S.scrambleSignal(cop);
+    %cop = S.scrambleSignal(cop);
     cop = Enc.encode(cop);
     CC.sendSig(cop);
     cop = CC.receiveSig();
     cop = Dec.decode(cop);
-    cop = D.descrambleSignal(cop);
+    %cop = D.descrambleSignal(cop);
     BER = BER + H.calculateBER(sig,cop);
-    S.resetLSFR();
-    D.resetLSFR();
+    %S.resetLSFR();
+    %D.resetLSFR();
 end
 BER = BER / 500;
