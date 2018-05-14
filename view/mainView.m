@@ -22,7 +22,7 @@ function varargout = mainView(varargin)
 
 % Edit the above text to modify the response to help mainView
 
-% Last Modified by GUIDE v2.5 18-Apr-2018 01:33:55
+% Last Modified by GUIDE v2.5 14-May-2018 22:22:26
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -200,6 +200,14 @@ copySignal = descrambler.descrambleSignal(copySignal);
 set(handles.textDescramblerView, 'String', copySignal.toString());
 %--------------BER
 set(handles.berVal, 'String', Helper.calculateBER(signal, copySignal));
+% hObject    handle to pushbuttonSend (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- If Enable == 'on', executes on mouse press in 5 pixel border.
+% --- Otherwise, executes on mouse press in 5 pixel border or over pushbuttonSend.
+function pushbuttonSend_ButtonDownFcn(hObject, eventdata, handles)
 % hObject    handle to pushbuttonSend (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
