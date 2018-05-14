@@ -132,6 +132,12 @@ function BSCProbability_Callback(hObject, eventdata, handles)
 % hObject    handle to BSCProbability (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+if(str2double(get(handles.BSCProbability, 'String')) < 0 || isnan(str2double(get(handles.TrueProbability, 'String'))))
+    set(handles.BSCProbability, 'String', '0');
+end
+if(str2double(get(handles.BSCProbability, 'String')) > 1)
+    set(handles.BSCProbability, 'String', '1');
+end
 set(handles.BSCProbabilitySlider, 'Value', str2double(get(handles.BSCProbability, 'String')));
 % Hints: get(hObject,'String') returns contents of BSCProbability as text
 %        str2double(get(hObject,'String')) returns contents of BSCProbability as a double
@@ -200,6 +206,12 @@ function TrueProbability_Callback(hObject, eventdata, handles)
 % hObject    handle to TrueProbability (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+if(str2double(get(handles.TrueProbability, 'String')) < 0 || isnan(str2double(get(handles.TrueProbability, 'String'))))
+    set(handles.TrueProbability, 'String', '0');
+end
+if(str2double(get(handles.TrueProbability, 'String')) > 1)
+    set(handles.TrueProbability, 'String', '1');
+end
 set(handles.TrueProbabilitySlider, 'Value', str2double(get(handles.TrueProbability, 'String')));
 % Hints: get(hObject,'String') returns contents of TrueProbability as text
 %        str2double(get(hObject,'String')) returns contents of TrueProbability as a double
