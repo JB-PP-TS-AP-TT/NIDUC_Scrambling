@@ -22,7 +22,7 @@ function varargout = FinalView(varargin)
 
 % Edit the above text to modify the response to help FinalView
 
-% Last Modified by GUIDE v2.5 14-May-2018 22:18:54
+% Last Modified by GUIDE v2.5 15-May-2018 19:50:44
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -235,7 +235,14 @@ function GenerateBtn_Callback(hObject, eventdata, handles)
 % hObject    handle to GenerateBtn (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+global frame; global probability; global signal;
+frame = get(handles.Frames, 'String'); %pobranie stringa z edittexta
+disp(frame);
+probability = get(handles.TrueProbability, 'String'); % pobranie stringa z editboxa
+disp(probability);
+signalGenerator = SignalGenerator(str2num(frame), str2num(probability));
+signal = signalGenerator.generateSignal(); %generuje sygna�
+set(handles.GeneratedSignal, 'String', signal.toString());
 
 
 function Frames_Callback(hObject, eventdata, handles)
@@ -291,3 +298,26 @@ function AboutBtn_ButtonDownFcn(hObject, eventdata, handles)
 % hObject    handle to AboutBtn (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+
+
+function edit11_Callback(hObject, eventdata, handles)
+% hObject    handle to edit11 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of edit11 as text
+%        str2double(get(hObject,'String')) returns contents of edit11 as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function edit11_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to edit11 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end

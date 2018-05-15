@@ -35,7 +35,7 @@ classdef SignalGenerator < handle
         end
         
         function gen = generateSignal(obj)
-            gen = Signal(obj.numOfFrames * 64); %d³ugoœæ sygna³y to iloœæ ramek razy iloœæ bitów (64b)
+            gen = Signal(obj.numOfFrames * 64); %d³ugoœæ sygna³u to iloœæ ramek razy iloœæ bitów (64b)
             
             for i = 1: gen.getSize()
                 if( (0.5 + obj.p/2) >= rand)     %szansa ¿e z prawdopodobieñstwiem p wstawi siê jedynka
