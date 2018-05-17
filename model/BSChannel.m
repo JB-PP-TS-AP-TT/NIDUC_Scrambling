@@ -43,7 +43,7 @@ classdef BSChannel < Channel
     methods (Access = private)
         function passThroughBSC(obj)
             %temp_sig bêdzie binarnym wektorem otrzymanego sygna³u 
-            temp_sig = zeros(1,this.signal.getSize()); %alokacja wektora o d³ugoœci sygna³u
+            temp_sig = zeros(1,obj.signal.getSize()); %alokacja wektora o d³ugoœci sygna³u
             for i=1 : obj.signal.getSize()
                 temp_sig(i) = obj.signal.getBitAt(i);
             end
