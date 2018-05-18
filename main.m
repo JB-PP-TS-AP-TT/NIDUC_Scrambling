@@ -8,7 +8,7 @@ addpath(genpath('helper'));
 %zdefiniowanej w glownyWidok.m, ktï¿½ra z kolei odpala figure
 %glownyWidok.fig, stworzonï¿½ przy pomocy GUIDE (lewym na glownyWidok.fig i
 %edytuj w GUIDE)
-%mainView();
+FinalView();
 
 %UWAGA: zakomentowa³em wyœwietlanie sygna³y, gdy¿ chcia³em skupiæ siê tylko
 %na BER i rozmiarze sygna³y cop po procesie resynchronizacji

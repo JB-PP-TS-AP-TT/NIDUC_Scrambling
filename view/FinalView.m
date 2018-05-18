@@ -1,4 +1,7 @@
 function varargout = FinalView(varargin)
+addpath(genpath('..\model'));
+addpath(genpath('..\helper'));
+
 %FINALVIEW MATLAB code file for FinalView.fig
 %      FINALVIEW, by itself, creates a new FINALVIEW or raises the existing
 %      singleton*.
@@ -22,7 +25,7 @@ function varargout = FinalView(varargin)
 
 % Edit the above text to modify the response to help FinalView
 
-% Last Modified by GUIDE v2.5 15-May-2018 19:50:44
+% Last Modified by GUIDE v2.5 18-May-2018 19:31:35
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -46,6 +49,7 @@ end
 
 % --- Executes just before FinalView is made visible.
 function FinalView_OpeningFcn(hObject, eventdata, handles, varargin)
+global channel; global encoder; global decoder; global scrambler; global descrambler; global signal;
 % This function has no output args, see OutputFcn.
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -58,6 +62,20 @@ handles.output = hObject;
 
 % Update handles structure
 guidata(hObject, handles);
+set(handles.BSCProbabilitySlider,'enable','off');
+set(handles.BSCProbability,'enable','off');
+set(handles.BitsPeriod,'enable','off');
+set(handles.BitsToDesync,'enable','off');
+set(handles.IdealChannelBtn,'value',1);
+set(handles.ScramblingOption,'value',1);
+set(handles.EncodeOption,'value',1);
+
+signal = Signal();
+channel = PerfectChannel();
+scrambler = Scrambler();
+descrambler = Descrambler();
+encoder = Encoder();
+decoder = DecoderEthernet();
 
 % UIWAIT makes FinalView wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
@@ -232,17 +250,22 @@ end
 
 % --- Executes on button press in GenerateBtn.
 function GenerateBtn_Callback(hObject, eventdata, handles)
+global frame; global signal; global probability; global signalGenerator;
 % hObject    handle to GenerateBtn (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-global frame; global probability; global signal;
-frame = get(handles.Frames, 'String'); %pobranie stringa z edittexta
-disp(frame);
-probability = get(handles.TrueProbability, 'String'); % pobranie stringa z editboxa
-disp(probability);
-signalGenerator = SignalGenerator(str2num(frame), str2num(probability));
-signal = signalGenerator.generateSignal(); %generuje sygna�
+% handles    structure with handles and user data (see GUIDATA) 
+
+frame = get(handles.Frames, 'String');
+probability = get(handles.TrueProbability, 'String');
+signalGenerator = SignalGenerator(str2double(frame), str2double(probability));
+signal = signalGenerator.generateSignal(); 
+
 set(handles.GeneratedSignal, 'String', signal.toString());
+set(handles.ScrambledSignal, 'String', '');
+set(handles.EncodedSignal, 'String', '');
+set(handles.ReceivedSignal, 'String', '');
+set(handles.DecodedSignal, 'String', '');
+set(handles.DescrambledSignal, 'String', '');
 
 
 function Frames_Callback(hObject, eventdata, handles)
@@ -269,6 +292,262 @@ end
 
 % --- Executes on button press in SendBtn.
 function SendBtn_Callback(hObject, eventdata, handles)
+global channel; global signal; global scrambler; global encoder; global decoder; global descrambler; global signalGenerator;
+
+if(signal.getSize() == 0)
+    signalGenerator = SignalGenerator(16, 0.5);
+    signal = signalGenerator.generateSignal();
+    set(handles.GeneratedSignal, 'String', signal.toString());
+end
+
+switch get(get(handles.ChannelPicker, 'SelectedObject'), 'Tag')
+    case 'IdealChannelBtn'
+        channel = PerfectChannel();
+        if(get(handles.ScramblingOption,'value') && get(handles.EncodeOption,'value'))
+            copySignal = signal.copy();
+            set(handles.BERLabel, 'String', '0');
+            %------SCRAMBLE
+            copySignal = scrambler.scrambleSignal(copySignal);
+            set(handles.ScrambledSignal, 'String', copySignal.toString());
+            %------ENCODE
+            copySignal = encoder.encode(copySignal);
+            set(handles.EncodedSignal, 'String', copySignal.toString());
+            %------SEND
+            channel.sendSig(copySignal);
+            copySignal = channel.receiveSig();
+            set(handles.ReceivedSignal, 'String', copySignal.toString());
+            %------DECODE
+            copySignal = decoder.decode(copySignal);
+            set(handles.DecodedSignal, 'String', copySignal.toString());
+            %------DESCRAMBLE
+            copySignal = descrambler.descrambleSignal(copySignal);
+            set(handles.DescrambledSignal, 'String', copySignal.toString());
+            %------BER
+            set(handles.BERLabel, 'String', Helper.calculateBER(signal, copySignal));
+            if(str2double(get(handles.BERLabel,'String')) > 0)
+                SendBtn_Callback(hObject, eventdata, handles);
+            end
+        elseif (~get(handles.ScramblingOption,'value') && get(handles.EncodeOption,'value'))
+            copySignal = signal.copy();
+            %------SCRAMBLE
+            set(handles.ScrambledSignal, 'String', '');
+            %------ENCODE
+            copySignal = encoder.encode(copySignal);
+            set(handles.EncodedSignal, 'String', copySignal.toString());
+            %------SEND
+            channel.sendSig(copySignal);
+            copySignal = channel.receiveSig();
+            set(handles.ReceivedSignal, 'String', copySignal.toString());
+            %------DECODE
+            copySignal = decoder.decode(copySignal);
+            set(handles.DecodedSignal, 'String', copySignal.toString());
+            %------DESCRAMBLE
+            set(handles.DescrambledSignal, 'String', '');
+            %------BER
+            set(handles.BERLabel, 'String', Helper.calculateBER(signal, copySignal));
+        elseif (get(handles.ScramblingOption,'value') && ~get(handles.EncodeOption,'value'))
+            copySignal = signal.copy();
+            %------SCRAMBLE
+            copySignal = scrambler.scrambleSignal(copySignal);
+            set(handles.ScrambledSignal, 'String', copySignal.toString());
+            %------ENCODE
+            set(handles.EncodedSignal, 'String', '');
+            %------SEND
+            channel.sendSig(copySignal);
+            copySignal = channel.receiveSig();
+            set(handles.ReceivedSignal, 'String', copySignal.toString());
+            %------DECODE
+            set(handles.DecodedSignal, 'String', '');
+            %------DESCRAMBLE
+            copySignal = descrambler.descrambleSignal(copySignal);
+            set(handles.DescrambledSignal, 'String', copySignal.toString());
+            %------BER
+            set(handles.BERLabel, 'String', Helper.calculateBER(signal, copySignal));
+        elseif (~get(handles.ScramblingOption,'value') && ~get(handles.EncodeOption,'value'))
+            copySignal = signal.copy();
+            %------SCRAMBLE
+            set(handles.ScrambledSignal, 'String', '');
+            %------ENCODE
+            set(handles.EncodedSignal, 'String', '');
+            %------SEND
+            channel.sendSig(copySignal);
+            copySignal = channel.receiveSig();
+            set(handles.ReceivedSignal, 'String', copySignal.toString());
+            %------DECODE
+            set(handles.DecodedSignal, 'String', '');
+            %------DESCRAMBLE
+            set(handles.DescrambledSignal, 'String', '');
+            %------BER
+            set(handles.BERLabel, 'String', Helper.calculateBER(signal, copySignal));
+        end
+        
+    case 'BSCBtn'
+        channel = BSChannel(str2double(get(handles.BSCProbability,'String')));
+        if(get(handles.ScramblingOption,'value') && get(handles.EncodeOption,'value'))
+            copySignal = signal.copy();
+            %------SCRAMBLE
+            copySignal = scrambler.scrambleSignal(copySignal);
+            set(handles.ScrambledSignal, 'String', copySignal.toString());
+            %------ENCODE
+            copySignal = encoder.encode(copySignal);
+            set(handles.EncodedSignal, 'String', copySignal.toString());
+            %------SEND
+            channel.sendSig(copySignal);
+            copySignal = channel.receiveSig();
+            set(handles.ReceivedSignal, 'String', copySignal.toString());
+            %------DECODE
+            copySignal = decoder.decode(copySignal);
+            set(handles.DecodedSignal, 'String', copySignal.toString());
+            %------DESCRAMBLE
+            copySignal = descrambler.descrambleSignal(copySignal);
+            set(handles.DescrambledSignal, 'String', copySignal.toString());
+            %------BER
+            set(handles.BERLabel, 'String', Helper.calculateBER(signal, copySignal));
+        elseif (~get(handles.ScramblingOption,'value') && get(handles.EncodeOption,'value'))
+            copySignal = signal.copy();
+            %------SCRAMBLE
+            set(handles.ScrambledSignal, 'String', '');
+            %------ENCODE
+            copySignal = encoder.encode(copySignal);
+            set(handles.EncodedSignal, 'String', copySignal.toString());
+            %------SEND
+            channel.sendSig(copySignal);
+            copySignal = channel.receiveSig();
+            set(handles.ReceivedSignal, 'String', copySignal.toString());
+            %------DECODE
+            copySignal = decoder.decode(copySignal);
+            set(handles.DecodedSignal, 'String', copySignal.toString());
+            %------DESCRAMBLE
+            set(handles.DescrambledSignal, 'String', '');
+            %------BER
+            set(handles.BERLabel, 'String', Helper.calculateBER(signal, copySignal));
+        elseif (get(handles.ScramblingOption,'value') && ~get(handles.EncodeOption,'value'))
+            copySignal = signal.copy();
+            %------SCRAMBLE
+            copySignal = scrambler.scrambleSignal(copySignal);
+            set(handles.ScrambledSignal, 'String', copySignal.toString());
+            %------ENCODE
+            set(handles.EncodedSignal, 'String', '');
+            %------SEND
+            channel.sendSig(copySignal);
+            copySignal = channel.receiveSig();
+            set(handles.ReceivedSignal, 'String', copySignal.toString());
+            %------DECODE
+            set(handles.DecodedSignal, 'String', '');
+            %------DESCRAMBLE
+            copySignal = descrambler.descrambleSignal(copySignal);
+            set(handles.DescrambledSignal, 'String', copySignal.toString());
+            %------BER
+            set(handles.BERLabel, 'String', Helper.calculateBER(signal, copySignal));
+        elseif (~get(handles.ScramblingOption,'value') && ~get(handles.EncodeOption,'value'))
+            copySignal = signal.copy();
+            %------SCRAMBLE
+            set(handles.ScrambledSignal, 'String', '');
+            %------ENCODE
+            set(handles.EncodedSignal, 'String', '');
+            %------SEND
+            channel.sendSig(copySignal);
+            copySignal = channel.receiveSig();
+            set(handles.ReceivedSignal, 'String', copySignal.toString());
+            %------DECODE
+            set(handles.DecodedSignal, 'String', '');
+            %------DESCRAMBLE
+            set(handles.DescrambledSignal, 'String', '');
+            %------BER
+            set(handles.BERLabel, 'String', Helper.calculateBER(signal, copySignal));
+        end
+        
+    case 'CustomChannelBtn'
+        if (isnan(str2double(get(handles.BitsToDesync,'String'))))
+            desync = 0;
+            set(handles.BitsToDesync,'String', '0');
+        else
+            desync = str2double(get(handles.BitsToDesync,'String'));
+        end
+        
+        if (isnan(str2double(get(handles.BitsPeriod,'String'))))
+            period = 0;
+            set(handles.BitsPeriod,'String', '0');
+        else
+            period = str2double(get(handles.BitsPeriod,'String'));
+        end
+        
+        channel = CustomChannel(str2double(get(handles.BSCProbability,'String')), desync, period);
+        if(get(handles.ScramblingOption,'value') && get(handles.EncodeOption,'value'))
+            copySignal = signal.copy();
+            %------SCRAMBLE
+            copySignal = scrambler.scrambleSignal(copySignal);
+            set(handles.ScrambledSignal, 'String', copySignal.toString());
+            %------ENCODE
+            copySignal = encoder.encode(copySignal);
+            set(handles.EncodedSignal, 'String', copySignal.toString());
+            %------SEND
+            channel.sendSig(copySignal);
+            copySignal = channel.receiveSig();
+            set(handles.ReceivedSignal, 'String', copySignal.toString());
+            %------DECODE
+            copySignal = decoder.decode(copySignal);
+            set(handles.DecodedSignal, 'String', copySignal.toString());
+            %------DESCRAMBLE
+            copySignal = descrambler.descrambleSignal(copySignal);
+            set(handles.DescrambledSignal, 'String', copySignal.toString());
+            %------BER
+            set(handles.BERLabel, 'String', Helper.calculateBER(signal, copySignal));
+        elseif (~get(handles.ScramblingOption,'value') && get(handles.EncodeOption,'value'))
+            copySignal = signal.copy();
+            %------SCRAMBLE
+            set(handles.ScrambledSignal, 'String', '');
+            %------ENCODE
+            copySignal = encoder.encode(copySignal);
+            set(handles.EncodedSignal, 'String', copySignal.toString());
+            %------SEND
+            channel.sendSig(copySignal);
+            copySignal = channel.receiveSig();
+            set(handles.ReceivedSignal, 'String', copySignal.toString());
+            %------DECODE
+            copySignal = decoder.decode(copySignal);
+            set(handles.DecodedSignal, 'String', copySignal.toString());
+            %------DESCRAMBLE
+            set(handles.DescrambledSignal, 'String', '');
+            %------BER
+            set(handles.BERLabel, 'String', Helper.calculateBER(signal, copySignal));
+        elseif (get(handles.ScramblingOption,'value') && ~get(handles.EncodeOption,'value'))
+            copySignal = signal.copy();
+            %------SCRAMBLE
+            copySignal = scrambler.scrambleSignal(copySignal);
+            set(handles.ScrambledSignal, 'String', copySignal.toString());
+            %------ENCODE
+            set(handles.EncodedSignal, 'String', '');
+            %------SEND
+            channel.sendSig(copySignal);
+            copySignal = channel.receiveSig();
+            set(handles.ReceivedSignal, 'String', copySignal.toString());
+            %------DECODE
+            set(handles.DecodedSignal, 'String', '');
+            %------DESCRAMBLE
+            copySignal = descrambler.descrambleSignal(copySignal);
+            set(handles.DescrambledSignal, 'String', copySignal.toString());
+            %------BER
+            set(handles.BERLabel, 'String', Helper.calculateBER(signal, copySignal));
+        elseif (~get(handles.ScramblingOption,'value') && ~get(handles.EncodeOption,'value'))
+            copySignal = signal.copy();
+            %------SCRAMBLE
+            set(handles.ScrambledSignal, 'String', '');
+            %------ENCODE
+            set(handles.EncodedSignal, 'String', '');
+            %------SEND
+            channel.sendSig(copySignal);
+            copySignal = channel.receiveSig();
+            set(handles.ReceivedSignal, 'String', copySignal.toString());
+            %------DECODE
+            set(handles.DecodedSignal, 'String', '');
+            %------DESCRAMBLE
+            set(handles.DescrambledSignal, 'String', '');
+            %------BER
+            set(handles.BERLabel, 'String', Helper.calculateBER(signal, copySignal));
+        end   
+end
+        
 % hObject    handle to SendBtn (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
@@ -321,3 +600,42 @@ function edit11_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes on button press in IdealChannelBtn.
+function IdealChannelBtn_Callback(hObject, eventdata, handles)
+% hObject    handle to IdealChannelBtn (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+set(handles.BSCProbabilitySlider,'enable','off');
+set(handles.BSCProbability,'enable','off');
+set(handles.BitsPeriod,'enable','off');
+set(handles.BitsToDesync,'enable','off');
+set(handles.BERLabel, 'String', '');
+% Hint: get(hObject,'Value') returns toggle state of IdealChannelBtn
+
+
+% --- Executes on button press in BSCBtn.
+function BSCBtn_Callback(hObject, eventdata, handles)
+% hObject    handle to BSCBtn (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+set(handles.BitsPeriod,'enable','off');
+set(handles.BitsToDesync,'enable','off');
+set(handles.BSCProbabilitySlider,'enable','on');
+set(handles.BSCProbability,'enable','on');
+set(handles.BERLabel, 'String', '');
+% Hint: get(hObject,'Value') returns toggle state of BSCBtn
+
+
+% --- Executes on button press in CustomChannelBtn.
+function CustomChannelBtn_Callback(hObject, eventdata, handles)
+% hObject    handle to CustomChannelBtn (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+set(handles.BSCProbabilitySlider,'enable','on');
+set(handles.BSCProbability,'enable','on');
+set(handles.BitsPeriod,'enable','on');
+set(handles.BitsToDesync,'enable','on');
+set(handles.BERLabel, 'String', '');
+% Hint: get(hObject,'Value') returns toggle state of CustomChannelBtn
