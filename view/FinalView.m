@@ -97,7 +97,7 @@ function AboutBtn_Callback(hObject, eventdata, handles)
 % hObject    handle to AboutBtn (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-msgbox('NiDUC 2 project: Scrambling', 'About');
+uiawait(msgbox({'NiDUC 2 project: Scrambling';'';'Signal transmission simulator';'Available channels: BSC, Custom, Ideal(default)';'';'Available modes: no modification, Scrambling, Encoding, Scrambling+Encoding(default)'}, 'About', 'modal'));
 
 
 % --- Executes on slider movement.
