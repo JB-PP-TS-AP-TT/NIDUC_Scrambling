@@ -150,7 +150,7 @@ function BSCProbability_Callback(hObject, eventdata, handles)
 % hObject    handle to BSCProbability (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-if(str2double(get(handles.BSCProbability, 'String')) < 0 || isnan(str2double(get(handles.TrueProbability, 'String'))))
+if(str2double(get(handles.BSCProbability, 'String')) < 0 || isnan(str2double(get(handles.TrueProbability, 'String'))) || str2double(get(handles.BSCProbability, 'String')) == "")
     set(handles.BSCProbability, 'String', '0');
 end
 if(str2double(get(handles.BSCProbability, 'String')) > 1)
@@ -224,7 +224,7 @@ function TrueProbability_Callback(hObject, eventdata, handles)
 % hObject    handle to TrueProbability (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-if(str2double(get(handles.TrueProbability, 'String')) < 0 || isnan(str2double(get(handles.TrueProbability, 'String'))))
+if(str2double(get(handles.TrueProbability, 'String')) < 0 || isnan(str2double(get(handles.TrueProbability, 'String'))) || str2double(get(handles.TrueProbability, 'String')) == "")
     set(handles.TrueProbability, 'String', '0');
 end
 if(str2double(get(handles.TrueProbability, 'String')) > 1)
@@ -254,10 +254,17 @@ global frame; global signal; global probability; global signalGenerator;
 % hObject    handle to GenerateBtn (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA) 
-
-frame = get(handles.Frames, 'String');
-probability = get(handles.TrueProbability, 'String');
-signalGenerator = SignalGenerator(str2double(frame), str2double(probability));
+if(get(handles.Frames, 'String') == "")
+frame = 1;
+else
+frame = str2double(get(handles.Frames, 'String'));    
+end
+if(get(handles.TrueProbability, 'String') == "")
+probability = 0.5;
+else
+probability = str2double(get(handles.TrueProbability, 'String'));
+end
+signalGenerator = SignalGenerator(frame, probability);
 signal = signalGenerator.generateSignal(); 
 
 set(handles.GeneratedSignal, 'String', signal.toString());
@@ -272,7 +279,9 @@ function Frames_Callback(hObject, eventdata, handles)
 % hObject    handle to Frames (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-
+if(str2double(get(handles.Frames, 'String')) <= 0 || isnan(str2double(get(handles.TrueProbability, 'String'))))
+    set(handles.Frames, 'String', '1');
+end
 % Hints: get(hObject,'String') returns contents of Frames as text
 %        str2double(get(hObject,'String')) returns contents of Frames as a double
 
